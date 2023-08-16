@@ -137,7 +137,11 @@ public class smartBanking {
                 case DEPOSIT_MONEY:
 
                     System.out.println("Enter your Account Number  ");
-
+                    accountNumber = SCANNER.nextLine();
+                    if(accountNumber.startsWith("CDB-")){
+                        for
+                    }
+                
                 default:
                     System.exit(0);
             }
