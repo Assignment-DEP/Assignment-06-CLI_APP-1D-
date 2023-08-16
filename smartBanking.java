@@ -23,6 +23,7 @@ public class smartBanking {
         String[] costomer = new String[0];
         String screen = DASHBOARD;
         double[] deposit = new double[0];
+        String[] accountNumbers = new String[0];
 
         do {
             final String APP_TITLE = String.format("%s%s%s",
@@ -61,7 +62,9 @@ public class smartBanking {
                 boolean valid;
                 String name;
                 double depositMoney=0;
-                System.out.printf("New Student ID: CDB-%05d \n", (costomer.length + 1));
+                String accountNumber =  String.format("CDB-%05d \n", (costomer.length + 1));
+                System.out.printf("New Account Number: "+accountNumber);
+                
                     do{
                         valid = true;
                         System.out.print("Enter Costomer Name: ");
@@ -102,7 +105,12 @@ public class smartBanking {
 
                     }while(!valid);
 
-                  
+                  String[] newAccountNumbers = new String[accountNumbers.length + 1];
+                    for (int i = 0; i < costomer.length; i++) {
+                        newAccountNumbers[i] = accountNumbers[i];
+                    }
+                    newAccountNumbers[newAccountNumbers.length -1] = accountNumber;
+                    accountNumbers = newAccountNumbers;
 
                     String[] newCostomer = new String[costomer.length + 1];
                     for (int i = 0; i < costomer.length; i++) {
@@ -117,6 +125,7 @@ public class smartBanking {
                     }
                     newDeposit[newDeposit.length -1] = depositMoney;
                     deposit = newDeposit;
+                    System.out.println(Arrays.toString(accountNumbers));
                     System.out.println(Arrays.toString(deposit));
                     System.out.println(Arrays.toString(costomer));
 
@@ -125,7 +134,10 @@ public class smartBanking {
                     if (SCANNER.nextLine().strip().toUpperCase().equals("Y")) continue;
                     screen = DASHBOARD;
                     break;
-                case WITHDRAW_MONEY:
+                case DEPOSIT_MONEY:
+
+                    System.out.println("Enter your Account Number  ");
+
                 default:
                     System.exit(0);
             }
