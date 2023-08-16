@@ -125,7 +125,7 @@ public class smartBanking {
                     if (SCANNER.nextLine().strip().toUpperCase().equals("Y")) continue;
                     screen = DASHBOARD;
                     break;
-               
+                case WITHDRAW_MONEY:
                 default:
                     System.exit(0);
             }
