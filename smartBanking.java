@@ -62,7 +62,7 @@ public class smartBanking {
                 boolean valid;
                 String name;
                 double depositMoney=0;
-                String accountNumber =  String.format("CDB-%05d \n", (costomer.length + 1));
+                String accountNumber =  String.format("CDB-%05d", (costomer.length + 1));
                 System.out.printf("New Account Number: "+accountNumber);
                 
                     do{
