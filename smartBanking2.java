@@ -1,12 +1,13 @@
 import java.util.Arrays;
 import java.util.Scanner;
 
-public class smartBanking {
+public class smartBanking2 {
     private static final Scanner SCANNER = new Scanner(System.in);
 
     public static void main(String[] args) {
         final String CLEAR = "\033[H\033[2J";
         final String COLOR_BLUE_BOLD = "\033[34;1m";
+        final String COLOR_GREEN_BOLD = "\033[33;1m";
         final String COLOR_RED_BOLD = "\033[31;1m";
         final String RESET = "\033[0m";
 
@@ -17,13 +18,16 @@ public class smartBanking {
         final String TRANSFER_MONEY = "Transfer Money";
         final String CHECK_ACCOUNT_BALANCE = "Check Account Balance";
         final String DROP_EXISTING_ACCOUNT = "Drop Existing Account";
+
+        final String ERROR_MSG = String.format("\t%s%s%s\n", COLOR_RED_BOLD, "%s", RESET);
+        final String SUCCESS_MSG = String.format("\t%s%s%s\n", COLOR_GREEN_BOLD, "%s", RESET);
         
         
 
-        String[] costomer = new String[0];
+        String[][] customer = new String[0][];
         String screen = DASHBOARD;
-        double[] deposit = new double[0];
-        String[] accountNumbers = new String[0];
+
+
 
         do {
             final String APP_TITLE = String.format("%s%s%s",
@@ -62,7 +66,7 @@ public class smartBanking {
                 boolean valid;
                 String name;
                 double depositMoney=0;
-                String accountNumber =  String.format("CDB-%05d", (costomer.length + 1));
+                String accountNumber =  String.format("CDB-%05d", (customer.length + 1));
                 System.out.println("New Account Number: "+accountNumber+"\n");
                 
                     do{
@@ -105,32 +109,20 @@ public class smartBanking {
 
                     }while(!valid);
 
-                  String[] newAccountNumbers = new String[accountNumbers.length + 1];
-                    for (int i = 0; i < costomer.length; i++) {
-                        newAccountNumbers[i] = accountNumbers[i];
-                    }
-                    newAccountNumbers[newAccountNumbers.length -1] = accountNumber;
-                    accountNumbers = newAccountNumbers;
+                    String[][] newCustomer = new String[customer.length+1][3];
+                    for (int i = 0; i < customer.length; i++) {
+                        newCustomer[i] = customer[i];}
+                    newCustomer[newCustomer.length - 1][0] = accountNumber;
+                    newCustomer[newCustomer.length - 1][1] = name;
+                    newCustomer[newCustomer.length - 1][2] = depositMoney+"";
+                    customer = newCustomer;
 
-                    String[] newCostomer = new String[costomer.length + 1];
-                    for (int i = 0; i < costomer.length; i++) {
-                        newCostomer[i] = costomer[i];
-                    }
-                    newCostomer[newCostomer.length -1] = name;
-                    costomer = newCostomer;
-
-                    double[] newDeposit = new double[deposit.length + 1];
-                    for (int i = 0; i < deposit.length; i++) {
-                        newDeposit[i] = deposit[i];
-                    }
-                    newDeposit[newDeposit.length -1] = depositMoney;
-                    deposit = newDeposit;
-                    System.out.println(Arrays.toString(accountNumbers));
-                    System.out.println(Arrays.toString(deposit));
-                    System.out.println(Arrays.toString(costomer));
+         
+                    System.out.println(Arrays.toString(customer));
+                   
 
                     System.out.println();
-                    System.out.print(name+" added sucessfully. Do you want to add new student (Y/n)? ");
+                    System.out.printf(SUCCESS_MSG,"added sucessfully. Do you want to add new student (Y/n)? ");
                     if (SCANNER.nextLine().strip().toUpperCase().equals("Y")) continue;
                     screen = DASHBOARD;
                     break;
@@ -148,7 +140,7 @@ public class smartBanking {
                         valid = false;
                     }
                   
-                    for (int i = 4; i < accountNumbers.length; i++) {
+                    for (int i = 4; i < customer.length; i++) {
                             if(!Character.isDigit(i)){
                                 System.out.println("Invalid Format");
                                 valid = false;
@@ -157,8 +149,8 @@ public class smartBanking {
                             
                     }
                     
-                    for (int i = 0; i < accountNumbers.length; i++) {
-                        if(!(accountNumber == accountNumbers[i])){
+                    for (int i = 0; i < customer.length; i++) {
+                        if(!(accountNumber == customer[i])){
                                 continue;
                         }
                         else{
@@ -177,3 +169,4 @@ public class smartBanking {
         }while(true);
     }
 } 
+
