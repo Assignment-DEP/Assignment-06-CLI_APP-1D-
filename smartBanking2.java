@@ -66,18 +66,22 @@ public class smartBanking2 {
                 boolean valid;
                 String name;
                 double depositMoney=0;
+                // AccountNumber
                 String accountNumber =  String.format("CDB-%05d", (customer.length + 1));
                 System.out.println("New Account Number: "+accountNumber+"\n");
                 
-                    do{
+                    do{ //Name
                         valid = true;
                         System.out.print("Enter Costomer Name: ");
                         name = SCANNER.nextLine().strip();
+
+                        // Empty
                         if (name.isBlank()){
                             System.out.printf("%sName can't be empty%s\n", COLOR_RED_BOLD, RESET);
                             valid = false;
                             continue;
                         }
+                        // Format
                         for (int i = 0; i < name.length(); i++) {
                             if (!(Character.isLetter(name.charAt(i)) || Character.isSpaceChar(name.charAt(i))) ) {
                                 System.out.printf("%sInvalid Name%s\n", COLOR_RED_BOLD, RESET);
@@ -85,8 +89,8 @@ public class smartBanking2 {
                                 break;
                             }
                         }
-                  
-                       if(valid == true) {  
+                        // Deposit
+                        if(valid == true) {  
                             System.out.println("Enter your initial Deposit ");
                                 try
                                 {
@@ -101,6 +105,7 @@ public class smartBanking2 {
                                 valid= false;
                             
                             }
+                            
                         }
 
                   
@@ -126,42 +131,51 @@ public class smartBanking2 {
                     if (SCANNER.nextLine().strip().toUpperCase().equals("Y")) continue;
                     screen = DASHBOARD;
                     break;
+
                 case DEPOSIT_MONEY:
                 valid = true;
 
-                  do { System.out.println("Enter your Account Number  ");
+                idValidation:
+                    do{System.out.println("Enter your Account Number  ");
                     accountNumber = SCANNER.nextLine().strip();
-                    if(accountNumber.isBlank()){
-                        System.out.println("Account number coudn't be empty");
-                        valid =false;
-                    }
-                    if((accountNumber.startsWith("CDB-")) && (accountNumber.length()==10)){
-                         System.out.println("Invalid Format");
-                        valid = false;
-                    }
-                  
-                    for (int i = 4; i < customer.length; i++) {
-                            if(!Character.isDigit(i)){
-                                System.out.println("Invalid Format");
-                                valid = false;
+                    
+                        /* Empty */
+                        if (accountNumber.isEmpty()) {
+                            valid = false;
+                            System.out.printf(ERROR_MSG, "ID Can't be empty");
+                            continue;
+                        }
 
+                        /* Format */
+                        if (!accountNumber.startsWith("CDB-") || accountNumber.length() != 9) {
+                            valid = false;
+                            System.out.printf(ERROR_MSG, "Invalid ID format");
+                            continue;
+                        } else {
+                            // CDB- =>00001
+                            String numberPart = accountNumber.substring(4);
+                            for (int i = 0; i < numberPart.length(); i++) {
+                                if (!Character.isDigit(numberPart.charAt(i))) {
+                                    valid = false;
+                                    System.out.printf(ERROR_MSG, "Invalid ID format");
+                                    continue idValidation;
+                                }
                             }
-                            
-                    }
-                    
-                    for (int i = 0; i < customer.length; i++) {
-                        if(!(accountNumber == customer[i])){
+                        }
+
+                        /* Didn't Exists */
+                        for (int row = 0; row < customer.length; row++) {
+                            if (customer[row][0].equals(accountNumber)) {
+                                valid=true;
                                 continue;
+                                
+                            }
+                            else{valid = false;
+                                System.out.printf(ERROR_MSG, "Account number didn't exist");
+                                continue idValidation;}
                         }
-                        else{
-                            System.out.println("Account number is "+ accountNumber);
-                            System.out.printf("Accoiunt balance : %s.2f",deposit[i]);
-                            break;
-                        }
-                    }
-                }while(!valid);
-                    
-                
+                    } while (!valid);
+                   
                 default:
                     System.exit(0);
             }
