@@ -2,33 +2,27 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 public class smartBanking2 {
-    private static final Scanner SCANNER = new Scanner(System.in);
+        private static final Scanner SCANNER = new Scanner(System.in);
+        final static String CLEAR = "\033[H\033[2J";
+        final static String COLOR_BLUE_BOLD = "\033[34;1m";
+        final static String COLOR_GREEN_BOLD = "\033[33;1m";
+        final static String COLOR_RED_BOLD = "\033[31;1m";
+        final static String RESET = "\033[0m";
+
+        final static String DASHBOARD = "Welcome to smart Banking App";
+        final static String OPEN_NEW_ACCOUNT = "Open New Account";
+        final static String DEPOSIT_MONEY = "Deposit Money";
+        final static String WITHDRAW_MONEY = "Withdraw Money";
+        final static String TRANSFER_MONEY = "Transfer Money";
+        final static String CHECK_ACCOUNT_BALANCE = "Check Account Balance";
+        final static String DROP_EXISTING_ACCOUNT = "Drop Existing Account";
+        static String screen;
+        final static String ERROR_MSG = String.format("\t%s%s%s\n", COLOR_RED_BOLD, "%s", RESET);
+        final static String SUCCESS_MSG = String.format("\t%s%s%s\n", COLOR_GREEN_BOLD, "%s", RESET);
+        static String[][] customer = {{"CDB-00001","NISHADA","76543"},{"CDB-00002","SHALINA","79543"},{"CDB-00003","KALPADEEEEP","96543"}};
 
     public static void main(String[] args) {
-        final String CLEAR = "\033[H\033[2J";
-        final String COLOR_BLUE_BOLD = "\033[34;1m";
-        final String COLOR_GREEN_BOLD = "\033[33;1m";
-        final String COLOR_RED_BOLD = "\033[31;1m";
-        final String RESET = "\033[0m";
-
-        final String DASHBOARD = "Welcome to smart Banking App";
-        final String OPEN_NEW_ACCOUNT = "Open New Account";
-        final String DEPOSIT_MONEY = "Deposit Money";
-        final String WITHDRAW_MONEY = "Withdraw Money";
-        final String TRANSFER_MONEY = "Transfer Money";
-        final String CHECK_ACCOUNT_BALANCE = "Check Account Balance";
-        final String DROP_EXISTING_ACCOUNT = "Drop Existing Account";
-
-        final String ERROR_MSG = String.format("\t%s%s%s\n", COLOR_RED_BOLD, "%s", RESET);
-        final String SUCCESS_MSG = String.format("\t%s%s%s\n", COLOR_GREEN_BOLD, "%s", RESET);
-        
-        
-
-        String[][] customer = new String[0][];
-        String screen = DASHBOARD;
-
-
-
+        screen = DASHBOARD;
         do {
             final String APP_TITLE = String.format("%s%s%s",
                                 COLOR_BLUE_BOLD, screen, RESET);
@@ -91,15 +85,17 @@ public class smartBanking2 {
                         }
                         // Deposit
                         if(valid == true) {  
-                            System.out.println("\tEnter your initial Deposit ");
+                            do{valid = true;
+                                System.out.print("\tEnter your initial Deposit ");
                                 try
                                 {
                                     depositMoney = SCANNER.nextDouble();  
                                     SCANNER.nextLine();     
                                 }
                                 catch(Exception e){System.out.println("\tNot an Valid input...");
-                                                    valid = false;
-                                                        }
+                                              }
+                             valid = false;                   
+                            }while(valid);
                             if(depositMoney<5000){
                                 System.out.println("\tInitial deposit should be greater than 5000 Rupees");
                                 valid= false;
@@ -110,7 +106,7 @@ public class smartBanking2 {
 
                   
                           
-
+                        
 
                     }while(!valid);
 
@@ -123,19 +119,105 @@ public class smartBanking2 {
                     customer = newCustomer;
 
          
-                    System.out.println(Arrays.toString(customer));
+                    System.out.println("\t"+Arrays.toString(customer));
                    
 
                     System.out.println();
-                    System.out.printf(SUCCESS_MSG,"added sucessfully. Do you want to add new student (Y/n)? ");
+                    System.out.printf(SUCCESS_MSG,"added sucessfully. Do you want to add new customer (Y/n)? ");
                     if (SCANNER.nextLine().strip().toUpperCase().equals("Y")) continue;
                     screen = DASHBOARD;
                     break;
 
                 case DEPOSIT_MONEY:
-                valid = true;
+                 int j = accountValidation();
+                        System.out.printf("\tCurrent Balance : Rs%,.2f\n",Double.valueOf(customer[j][2]));
+                        double deposit;
+                        do{
+                            valid = true;
+                            System.out.print("\tDeposit Amount : ");
+                            deposit = SCANNER.nextInt();
+                            SCANNER.nextLine();
 
-                        do{System.out.print("\tEnter your Account Number  ");
+                            if(deposit<500){
+                                System.out.printf(ERROR_MSG,"Deposit should be greater than Rs.500.00");
+                                valid = false;
+                            }
+                        }while(!valid);
+
+                        double total = Double.valueOf(customer[j][2])+deposit;
+                        customer[j][2]= total+"";
+                        System.out.printf("\tNew Balance : Rs%,.2f\n",Double.valueOf(customer[j][2]));
+
+                         System.out.printf(SUCCESS_MSG,"added sucessfully. Do you want to continue(Y/n)? ");
+                        if (SCANNER.nextLine().strip().toUpperCase().equals("Y")) continue;
+                        screen = DASHBOARD;
+                        break;
+                        
+                case WITHDRAW_MONEY:
+                   
+                    j = accountValidation();
+                       
+                        System.out.printf("\tCurrent Balance : Rs%,.2f\n",Double.valueOf(customer[j][2]));
+                        double withdraw = withdraw(j);
+                       
+
+                        total = Double.valueOf(customer[j][2])-withdraw;
+                        customer[j][2]= total+"";
+                        System.out.printf("\tNew Balance : Rs%,.2f\n",Double.valueOf(customer[j][2]));
+
+                        System.out.printf(SUCCESS_MSG,"added sucessfully. Do you want to continue(Y/n)? ");
+                        if (SCANNER.nextLine().strip().toUpperCase().equals("Y")) continue;
+                        screen = DASHBOARD;
+                        break;
+
+                case TRANSFER_MONEY:
+
+                    System.out.print("Transfer phase-->\n");
+                    j = accountValidation();
+                    if(j==-1) break;
+
+                    System.out.print("\b".repeat(30).concat("Reciver phase -->\n"));
+                    int j1 = accountValidation();
+                    if(j1==-1) break;
+
+                    System.out.println();
+                    System.out.println("\tFrom Account Name : " +customer[j1][1]);
+                    System.out.printf("\tCurrent Balance   : Rs%,.2f\n",Double.valueOf(customer[j1][2]));
+                    System.out.println("\tTo Account Name   : " +customer[j][1]);
+                    System.out.printf("\tCurrent Balance   : Rs%,.2f\n",Double.valueOf(customer[j][2]));
+                    System.out.println();
+                    System.out.print("\tTransfer ");
+                    double transferAmount = withdraw(j);
+                    total = Double.valueOf(customer[j][2])-transferAmount;
+                    customer[j][2]= total+"";
+                    System.out.printf("\tNew From Account Balance : Rs%,.2f\n",Double.valueOf(customer[j][2]));
+                    total = Double.valueOf(customer[j1][2])+transferAmount;
+                    customer[j][2]= total+"";
+                    System.out.printf("\tNew To Account Balance : Rs%,.2f\n",Double.valueOf(customer[j][2]));
+                    System.out.printf(SUCCESS_MSG,"added sucessfully. Do you want to continue(Y/n)? ");
+                    if (SCANNER.nextLine().strip().toUpperCase().equals("Y")) continue;
+                        screen = DASHBOARD;
+                        break;
+
+
+                     
+                   
+
+
+                default:
+                    System.exit(0);
+            }
+            
+        }while(true);
+    }
+
+
+    public static int accountValidation(){
+        String accountNumber;
+         boolean valid;
+        int j = 0;
+                        do{valid = true;
+                        System.out.print("\tEnter Account Number  ");
                         accountNumber = SCANNER.nextLine().strip();
                         
                             /* Empty */
@@ -161,34 +243,56 @@ public class smartBanking2 {
                                     }
                                 }
                                 boolean exists = false;
-                                for (int i = 0; i < customer.length; i++) {
-                                    if (customer[i][0].equals(accountNumber)){
+                                for (j = 0; j < customer.length; j++) {
+                                    if (customer[j][0].equals(accountNumber)){
                                         exists = true;
                                         break;
                                     }
                                 }    
                                 if (!exists){
                                     valid = false;
-                                    System.out.printf(ERROR_MSG, "Customer ID does not exist");
+                                    System.out.printf(ERROR_MSG, "Account Number does not exist");
                                 }
+                                
                             }
                             if (!valid) {
                                 System.out.print("\n\tDo you want to try again? (Y/n)");
                                 if (!SCANNER.nextLine().strip().toUpperCase().equals("Y")){
                                     screen = DASHBOARD;
+                                    j=-1;
                                     break;
                                 }
                                 System.out.println();
                             }
                         } while (!valid);
-                   
+                     
+                        
+                        return j;
 
+    }
+    public static double withdraw(int j){
+        double withdraw = 0.0;
+        boolean valid;
+        do{
+           do{valid = true;
+                System.out.print("Amount : ");
+                try
+                    {
+                    withdraw = SCANNER.nextDouble();  
+                    SCANNER.nextLine();     
+                     }
+                catch(Exception e){System.out.println("\tNot an Valid input...");
+                        valid = false; }                        
+                }while(!valid);
 
-                default:
-                    System.exit(0);
+            if(withdraw>Double.valueOf(customer[j][2])-1000){
+                System.out.printf(ERROR_MSG,"Account Balance should be greater than Rs.1000.00");
+                System.out.print("\t");
+                valid = false;
             }
-            
-        }while(true);
+
+         }while(!valid);
+        return withdraw;
     }
 } 
 
